@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
 import { AlertTriangle, CheckCircle2, Info, Car, Bike, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
-export default function PublicScanPage({ params }: { params: { qr_code_id: string } }) {
+export default function PublicScanPage({ params }: { params: Promise<{ qr_code_id: string }> }) {
+    const { qr_code_id } = use(params);
     const [vehicle, setVehicle] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
@@ -16,15 +17,15 @@ export default function PublicScanPage({ params }: { params: { qr_code_id: strin
 
     useEffect(() => {
         fetchVehicle();
-    }, [params.qr_code_id]);
+    }, [qr_code_id]);
 
     const fetchVehicle = async () => {
         try {
-            console.log("Fetching vehicle with QR ID:", params.qr_code_id);
+            console.log("Fetching vehicle with QR ID:", qr_code_id);
             const { data, error } = await supabase
                 .from("vehicles")
                 .select("vehicle_number, vehicle_type, nickname")
-                .eq("qr_code_id", params.qr_code_id)
+                .eq("qr_code_id", qr_code_id)
                 .single();
 
             if (error) {
@@ -47,7 +48,7 @@ export default function PublicScanPage({ params }: { params: { qr_code_id: strin
             const res = await fetch("/api/notify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ qr_code_id: params.qr_code_id }),
+                body: JSON.stringify({ qr_code_id: qr_code_id }),
             });
 
             const data = await res.json();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -8,17 +8,28 @@ import { Download, ChevronLeft, Printer, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-export default function QRPage({ params }: { params: { qr_code_id: string } }) {
+export default function QRPage({ params }: { params: Promise<{ qr_code_id: string }> }) {
+    const { qr_code_id } = use(params);
     const [qrUrl, setQrUrl] = useState<string>("");
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const router = useRouter();
-    const publicUrl = `${window.location.origin}/v/${params.qr_code_id}`;
+
+    const [publicUrl, setPublicUrl] = useState<string>("");
 
     useEffect(() => {
-        generateQR();
-    }, [params.qr_code_id]);
+        if (typeof window !== "undefined") {
+            setPublicUrl(`${window.location.origin}/v/${qr_code_id}`);
+        }
+    }, [qr_code_id]);
+
+    useEffect(() => {
+        if (publicUrl) {
+            generateQR();
+        }
+    }, [publicUrl]);
 
     const generateQR = async () => {
+        if (!publicUrl) return;
         try {
             const url = await QRCode.toDataURL(publicUrl, {
                 width: 400,
@@ -38,7 +49,7 @@ export default function QRPage({ params }: { params: { qr_code_id: string } }) {
     const downloadQR = () => {
         const link = document.createElement("a");
         link.href = qrUrl;
-        link.download = `move-my-car-${params.qr_code_id}.png`;
+        link.download = `move-my-car-${qr_code_id}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -75,7 +86,7 @@ export default function QRPage({ params }: { params: { qr_code_id: string } }) {
                             />
                         )}
                         <div className="mt-6 text-center text-black space-y-1">
-                            <p className="font-bold text-lg">ID: {params.qr_code_id}</p>
+                            <p className="font-bold text-lg">ID: {qr_code_id}</p>
                             <p className="text-xs text-zinc-500">Keep this card in your vehicle's windshield</p>
                         </div>
                     </CardContent>
@@ -99,8 +110,10 @@ export default function QRPage({ params }: { params: { qr_code_id: string } }) {
                     </Button>
                     <Button
                         onClick={() => {
-                            navigator.clipboard.writeText(publicUrl);
-                            toast.success("Link copied to clipboard");
+                            if (publicUrl) {
+                                navigator.clipboard.writeText(publicUrl);
+                                toast.success("Link copied to clipboard");
+                            }
                         }}
                         variant="outline"
                         className="col-span-2 border-zinc-800 text-white hover:bg-zinc-900 font-bold h-12"
