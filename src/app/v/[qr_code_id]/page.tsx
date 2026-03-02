@@ -20,15 +20,21 @@ export default function PublicScanPage({ params }: { params: { qr_code_id: strin
 
     const fetchVehicle = async () => {
         try {
+            console.log("Fetching vehicle with QR ID:", params.qr_code_id);
             const { data, error } = await supabase
                 .from("vehicles")
                 .select("vehicle_number, vehicle_type, nickname")
                 .eq("qr_code_id", params.qr_code_id)
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error("Supabase error fetching vehicle:", error);
+                throw error;
+            }
+            console.log("Vehicle data found:", data);
             setVehicle(data);
         } catch (err: any) {
+            console.error("Catch block error:", err);
             setError("Vehicle not found or invalid QR code.");
         } finally {
             setLoading(false);
