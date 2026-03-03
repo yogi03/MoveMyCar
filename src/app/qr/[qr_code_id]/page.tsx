@@ -56,16 +56,16 @@ export default function QRPage({ params }: { params: Promise<{ qr_code_id: strin
         toast.success("Downloading QR Code");
     };
 
-    const printQR = () => {
-        window.print();
-    };
+    // const printQR = () => {
+    //     window.print();
+    // };
 
     return (
         <div className="min-h-screen bg-black text-white p-4 md:p-8 flex flex-col items-center">
             <div className="w-full max-w-md space-y-6">
                 <Button
                     variant="ghost"
-                    className="text-zinc-400 hover:text-white mb-2 p-0 h-auto"
+                    className="text-zinc-400 hover:text-black hover:bg-yellow-600 mb-2 p-0 h-auto"
                     onClick={() => router.push("/dashboard")}
                 >
                     <ChevronLeft className="mr-2 h-4 w-4" />
@@ -100,15 +100,15 @@ export default function QRPage({ params }: { params: Promise<{ qr_code_id: strin
                         <Download className="mr-2 h-4 w-4" />
                         Download PNG
                     </Button>
-                    <Button
+                    {/* <Button
                         onClick={printQR}
                         variant="outline"
                         className="border-zinc-800 text-white hover:bg-zinc-900 font-bold h-12"
                     >
                         <Printer className="mr-2 h-4 w-4" />
                         Print Card
-                    </Button>
-                    <Button
+                    </Button> */}
+                    {/* <Button
                         onClick={() => {
                             if (publicUrl) {
                                 navigator.clipboard.writeText(publicUrl);
@@ -120,7 +120,7 @@ export default function QRPage({ params }: { params: Promise<{ qr_code_id: strin
                     >
                         <Share2 className="mr-2 h-4 w-4" />
                         Copy Public Link
-                    </Button>
+                    </Button> */}
                 </div>
 
                 <div className="bg-zinc-950 border border-yellow-500/10 p-4 rounded-lg space-y-2 no-print print:hidden">
