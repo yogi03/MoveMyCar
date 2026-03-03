@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next"
+import GoogleOneTap from "@/components/auth/GoogleOneTap";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         className={`${inter.className} bg-black text-white antialiased`}
         suppressHydrationWarning
       >
+        <GoogleOneTap />
         {children}
         <Toaster
           position="bottom-center"
