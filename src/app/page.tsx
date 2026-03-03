@@ -3,28 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
 import { QrCode, Bell, Smartphone, ShieldCheck, ChevronRight, Car } from "lucide-react";
-import Link from "next/link";
+// import Logo from "@/components/layout/Logo";
+import Header from "@/components/layout/Header";
 
 export default function LandingPage() {
   const router = useRouter();
+  const { user, loading } = useAuth();
+
+  const handleGetStarted = () => {
+    if (loading) return;
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-yellow-500 selection:text-black">
       {/* Navigation */}
-      <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-            <span className="text-black font-bold text-xl">M</span>
-          </div>
-          <span className="text-xl font-bold tracking-tight">MoveMyCar</span>
-        </div>
-        <Link href="/login">
-          <Button variant="ghost" className="text-zinc-400 hover:text-white hover:bg-zinc-900">
-            Login
-          </Button>
-        </Link>
-      </nav>
+      <Header />
 
       {/* Hero Section */}
       <section className="px-6 pt-20 pb-32 text-center max-w-4xl mx-auto space-y-8">
@@ -47,10 +47,11 @@ export default function LandingPage() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
           <Button
-            onClick={() => router.push("/login")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-lg h-14 px-8 rounded-xl transition-all hover:scale-105 active:scale-95"
+            onClick={handleGetStarted}
+            disabled={loading}
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-lg h-14 px-8 rounded-xl transition-all hover:scale-105 active:scale-95 min-w-[200px]"
           >
-            Get Started Now
+            {user ? "Go to Dashboard" : "Get Started Now"}
             <ChevronRight className="ml-2 h-5 w-5" />
           </Button>
           <Button

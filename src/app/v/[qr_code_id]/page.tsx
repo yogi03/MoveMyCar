@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { supabase } from "@/lib/supabase";
 import { AlertTriangle, CheckCircle2, Info, Car, Bike, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import Header from "@/components/layout/Header";
 
 export default function PublicScanPage({ params }: { params: Promise<{ qr_code_id: string }> }) {
     const { qr_code_id } = use(params);
@@ -88,12 +89,10 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
     }
 
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-sm space-y-6">
+        <div className="min-h-screen bg-black flex flex-col items-center gap-8">
+            <Header />
+            <div className="w-full max-w-sm space-y-6 px-4">
                 <header className="text-center space-y-2">
-                    <div className="mx-auto w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center mb-6">
-                        <span className="text-black font-bold text-2xl">M</span>
-                    </div>
                     <h1 className="text-3xl font-bold text-yellow-500">MoveMyCar</h1>
                     <p className="text-zinc-400">Owner Notification System</p>
                 </header>
