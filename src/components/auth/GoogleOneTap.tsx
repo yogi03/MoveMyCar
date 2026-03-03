@@ -31,6 +31,7 @@ export default function GoogleOneTap() {
                     client_id: clientId,
                     callback: handleCredentialResponse,
                     auto_select: true,
+                    use_fedcm_for_prompt: false, // Workaround for AbortError
                 });
 
                 window.google.accounts.id.prompt((notification: any) => {

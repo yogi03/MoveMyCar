@@ -9,9 +9,9 @@ export default function Logo({ className = "" }: { className?: string }) {
             <Image
                 src="/logo.png"
                 alt="MoveMyCar Logo"
-                width={150}
+                width={180}
                 height={60}
-                className="rounded-lg object-contain w-auto h-auto max-h-[60px]"
+                className="rounded-lg object-contain w-[180px] h-auto"
                 priority
             />
             {/* <span className="text-xl font-bold tracking-tight text-white">MoveMyCar</span> */}
