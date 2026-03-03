@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, use } from "react";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Download, ChevronLeft, Printer, Share2 } from "lucide-react";
+import { Download, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -56,10 +56,6 @@ export default function QRPage({ params }: { params: Promise<{ qr_code_id: strin
         toast.success("Downloading QR Code");
     };
 
-    // const printQR = () => {
-    //     window.print();
-    // };
-
     return (
         <div className="min-h-screen bg-black text-white p-4 md:p-8 flex flex-col items-center">
             <div className="w-full max-w-md space-y-6">
@@ -92,41 +88,20 @@ export default function QRPage({ params }: { params: Promise<{ qr_code_id: strin
                     </CardContent>
                 </Card>
 
-                <div className="grid grid-cols-2 gap-4 no-print print:hidden">
+                <div className="no-print print:hidden">
                     <Button
                         onClick={downloadQR}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold h-12"
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold h-12"
                     >
                         <Download className="mr-2 h-4 w-4" />
                         Download PNG
                     </Button>
-                    {/* <Button
-                        onClick={printQR}
-                        variant="outline"
-                        className="border-zinc-800 text-white hover:bg-zinc-900 font-bold h-12"
-                    >
-                        <Printer className="mr-2 h-4 w-4" />
-                        Print Card
-                    </Button> */}
-                    {/* <Button
-                        onClick={() => {
-                            if (publicUrl) {
-                                navigator.clipboard.writeText(publicUrl);
-                                toast.success("Link copied to clipboard");
-                            }
-                        }}
-                        variant="outline"
-                        className="col-span-2 border-zinc-800 text-white hover:bg-zinc-900 font-bold h-12"
-                    >
-                        <Share2 className="mr-2 h-4 w-4" />
-                        Copy Public Link
-                    </Button> */}
                 </div>
 
                 <div className="bg-zinc-950 border border-yellow-500/10 p-4 rounded-lg space-y-2 no-print print:hidden">
                     <h4 className="text-yellow-500 font-semibold text-sm">Instructions:</h4>
                     <ol className="text-xs text-zinc-400 space-y-1 list-decimal list-inside">
-                        <li>Download or Print this QR card</li>
+                        <li>Download this QR card</li>
                         <li>Place it on your dashboard or window</li>
                         <li>When someone scans it, you'll get a push alert</li>
                     </ol>
