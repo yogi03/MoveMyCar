@@ -86,23 +86,19 @@ export default function Dashboard() {
 
                     {isEditing || (vehicles.length === 0 && !fetching) ? (
                         <div className="space-y-6">
-                            {(isEditing || (vehicles.length === 0 && !fetching)) && (
+                            {(isEditing || (vehicles.length === 0 && vehicles[0])) && (
                                 <Button
                                     variant="ghost"
-                                    onClick={() => {
-                                        setIsEditing(null);
-                                        // If we were just showing the empty state form, we don't need to do anything
-                                        // but if we were editing, this will go back to the list
-                                    }}
+                                    onClick={() => setIsEditing(null)}
                                     className="text-zinc-400 hover:text-black hover:bg-yellow-500 mb-4"
                                 >
                                     <ArrowLeft className="mr-2 h-4 w-4" />
-                                    {isEditing ? "Back to Dashboard" : "Cancel"}
+                                    Back to Dashboard
                                 </Button>
                             )}
                             <VehicleForm
                                 userId={user!.uid}
-                                initialData={isEditing}
+                                initialData={isEditing && typeof isEditing === 'object' ? isEditing : null}
                                 onSuccess={() => {
                                     fetchVehicles();
                                     setIsEditing(null);
@@ -185,7 +181,7 @@ export default function Dashboard() {
 
                             {/* Add New Vehicle Card */}
                             <button
-                                onClick={() => setIsEditing(null)}
+                                onClick={() => setIsEditing('new')}
                                 className="h-full min-h-[300px] border-2 border-dashed border-zinc-800 rounded-xl hover:border-yellow-500/50 hover:bg-yellow-500/5 transition-all group flex flex-col items-center justify-center space-y-4"
                             >
                                 <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center group-hover:bg-yellow-500/10 transition-colors">

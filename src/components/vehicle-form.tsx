@@ -36,9 +36,30 @@ export default function VehicleForm({ userId, initialData, onSuccess }: VehicleF
         const vehicleNumber = formData.get("vehicleNumber") as string;
         const vehicleType = formData.get("vehicleType") as string;
         const nickname = formData.get("nickname") as string;
-        const qrCodeId = isEdit ? initialData.qr_code_id : generateQrId();
+
+        const normalizedInput = vehicleNumber.replace(/\s+/g, "").toUpperCase();
 
         try {
+            // Check for uniqueness (per user as requested)
+            const { data: existing, error: fetchError } = await supabase
+                .from("vehicles")
+                .select("id, vehicle_number")
+                .eq("user_id", userId);
+
+            if (fetchError) throw fetchError;
+
+            const isDuplicate = existing?.some(v =>
+                v.vehicle_number.replace(/\s+/g, "").toUpperCase() === normalizedInput &&
+                v.id !== initialData?.id
+            );
+
+            if (isDuplicate) {
+                toast.error("You have already registered this vehicle number.");
+                setLoading(false);
+                return;
+            }
+
+            const qrCodeId = isEdit ? initialData.qr_code_id : generateQrId();
             if (isEdit) {
                 const { error } = await supabase
                     .from("vehicles")
