@@ -8,9 +8,9 @@ export default function Footer() {
     return (
         <footer className="w-full bg-zinc-950 border-t border-zinc-900 pt-16 pb-8">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
                     {/* Brand Section */}
-                    <div className="space-y-6 col-span-1 md:col-span-1">
+                    <div className="space-y-6 col-span-2 md:col-span-1">
                         <Logo />
                         <p className="text-zinc-500 text-sm leading-relaxed max-w-xs">
                             The smartest way to handle parking blocks. Just one scan, one alert, and no phone numbers exposed.
@@ -44,7 +44,7 @@ export default function Footer() {
                     </div>
 
                     {/* Support */}
-                    <div className="space-y-6">
+                    <div className="space-y-6 col-span-2 md:col-span-1">
                         <h4 className="text-white font-bold text-lg">Support</h4>
                         <div className="flex items-center gap-3 text-zinc-500 hover:text-yellow-500 transition-colors cursor-pointer group">
                             <div className="p-2 bg-zinc-900 rounded-lg group-hover:bg-yellow-500/10 transition-colors">
