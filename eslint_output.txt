@@ -1,0 +1,12 @@
+
+D:\Internship\MoveMyCar\src\app\page.tsx
+  8:24  warning  'Smartphone' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Internship\MoveMyCar\src\components\auth\GoogleOneTap.tsx
+  21:44  error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  35:61  error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  64:8   warning  React Hook useEffect has a missing dependency: 'initializeOneTap'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  83:17  error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+Γ£û 5 problems (3 errors, 2 warnings)
+

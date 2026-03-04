@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { QrCode, Bell, Smartphone, ShieldCheck, ChevronRight, Car } from "lucide-react";
+import { QrCode, Bell, ShieldCheck, ChevronRight, Car } from "lucide-react";
 // import Logo from "@/components/layout/Logo";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
