@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { AlertTriangle, CheckCircle2, Info, Car, Bike, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 export default function PublicScanPage({ params }: { params: Promise<{ qr_code_id: string }> }) {
     const { qr_code_id } = use(params);
@@ -160,6 +161,7 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
                     </Button>
                 )}
             </div>
+            <Footer />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { QrCode, Bell, Smartphone, ShieldCheck, ChevronRight, Car } from "lucide-react";
 // import Logo from "@/components/layout/Logo";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -153,9 +154,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-12 border-t border-zinc-900 text-center text-zinc-600 text-sm">
-        <p>© 2026 MoveMyCar. Build with Premium Aesthetics.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { QrCode, Car, Bike, Plus } from "lucide-react";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 export default function Dashboard() {
     const { user, loading, logout } = useAuth();
@@ -114,6 +115,7 @@ export default function Dashboard() {
                     )}
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

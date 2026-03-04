@@ -8,6 +8,7 @@ import { Download, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 export default function QRPage({ params }: { params: Promise<{ qr_code_id: string }> }) {
     const { qr_code_id } = use(params);
@@ -119,6 +120,7 @@ export default function QRPage({ params }: { params: Promise<{ qr_code_id: strin
         }
       `}</style>
             </div>
+            <Footer />
         </div>
     );
 }
