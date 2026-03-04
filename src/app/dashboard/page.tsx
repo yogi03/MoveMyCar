@@ -29,19 +29,75 @@ export default function Dashboard() {
 
         if (user) {
             fetchVehicles();
+
+            // Real-time alerts
+            const channel = supabase
+                .channel('realtime_alerts')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'alert_logs'
+                    },
+                    (payload) => {
+                        const newAlert = payload.new;
+                        setVehicles(prev => prev.map(v =>
+                            v.id === newAlert.vehicle_id
+                                ? { ...v, alert_count: (v.alert_count || 0) + 1 }
+                                : v
+                        ));
+                        toast("🚨 New alert received!", { icon: "🔔" });
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
         }
     }, [user, loading, router]);
 
     const fetchVehicles = async () => {
+        if (!user) return;
         setFetching(true);
-        const { data } = await supabase
-            .from("vehicles")
-            .select("*")
-            .eq("user_id", user?.uid)
-            .order('created_at', { ascending: true });
+        try {
+            // 1. Fetch vehicles
+            const { data: vehicleData, error: vError } = await supabase
+                .from("vehicles")
+                .select("*")
+                .eq("user_id", user.uid)
+                .order('created_at', { ascending: true });
 
-        setVehicles(data || []);
-        setFetching(false);
+            if (vError) throw vError;
+
+            // 2. Fetch alert counts for these vehicles
+            const vehicleIds = vehicleData?.map(v => v.id) || [];
+            const { data: alertCounts, error: aError } = await supabase
+                .from("alert_logs")
+                .select("vehicle_id")
+                .in("vehicle_id", vehicleIds);
+
+            if (aError) throw aError;
+
+            // Count alerts per vehicle
+            const countsMap = (alertCounts || []).reduce((acc: any, curr: any) => {
+                acc[curr.vehicle_id] = (acc[curr.vehicle_id] || 0) + 1;
+                return acc;
+            }, {});
+
+            const vehiclesWithCounts = vehicleData?.map(v => ({
+                ...v,
+                alert_count: countsMap[v.id] || 0
+            })) || [];
+
+            setVehicles(vehiclesWithCounts);
+        } catch (error: any) {
+            console.error("Error fetching vehicles/alerts:", error);
+            toast.error("Failed to load dashboard data");
+        } finally {
+            setFetching(false);
+        }
     };
 
     const handleDelete = async (vehicleId: string) => {
@@ -157,7 +213,7 @@ export default function Dashboard() {
                                         <div className="grid grid-cols-2 gap-4 py-4 border-y border-zinc-900">
                                             <div>
                                                 <p className="text-[10px] uppercase font-bold text-zinc-600 mb-1">Total Alerts</p>
-                                                <p className="text-lg font-bold text-white">0</p>
+                                                <p className="text-lg font-bold text-white">{v.alert_count || 0}</p>
                                             </div>
                                             <div>
                                                 <p className="text-[10px] uppercase font-bold text-zinc-600 mb-1">Account Type</p>
