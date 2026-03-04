@@ -1,0 +1,37 @@
+
+D:\Internship\MoveMyCar\src\app\qr\[qr_code_id]\page.tsx
+   30:13  error    Error: Cannot access variable before it is declared
+
+`generateQR` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Internship\MoveMyCar\src\app\qr\[qr_code_id]\page.tsx:30:13
+  28 |     useEffect(() => {
+  29 |         if (publicUrl) {
+> 30 |             generateQR();
+     |             ^^^^^^^^^^ `generateQR` accessed before it is declared
+  31 |         }
+  32 |     }, [publicUrl]);
+  33 |
+
+D:\Internship\MoveMyCar\src\app\qr\[qr_code_id]\page.tsx:34:5
+  32 |     }, [publicUrl]);
+  33 |
+> 34 |     const generateQR = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 35 |         if (!publicUrl) return;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         try {
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 49 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |     };
+     | ^^^^^^^ `generateQR` is declared here
+  51 |
+  52 |     const downloadQR = async () => {
+  53 |         if (!cardRef.current) return;  react-hooks/immutability
+   32:8   warning  React Hook useEffect has a missing dependency: 'generateQR'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+  102:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @next/next/no-img-element
+
+Γ£û 3 problems (1 error, 2 warnings)
+
