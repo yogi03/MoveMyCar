@@ -16,10 +16,10 @@ import toast from "react-hot-toast";
 export default function Dashboard() {
     const { user, loading, logout } = useAuth();
     useFCM(user?.uid);
-    const [vehicle, setVehicle] = useState<any>(null);
+    const [vehicles, setVehicles] = useState<any[]>([]);
     const [fetching, setFetching] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [deleting, setDeleting] = useState(false);
+    const [isEditing, setIsEditing] = useState<any>(null);
+    const [deleting, setDeleting] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -28,41 +28,41 @@ export default function Dashboard() {
         }
 
         if (user) {
-            fetchVehicle();
+            fetchVehicles();
         }
     }, [user, loading, router]);
 
-    const fetchVehicle = async () => {
+    const fetchVehicles = async () => {
         setFetching(true);
         const { data } = await supabase
             .from("vehicles")
             .select("*")
             .eq("user_id", user?.uid)
-            .maybeSingle();
+            .order('created_at', { ascending: true });
 
-        setVehicle(data);
+        setVehicles(data || []);
         setFetching(false);
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (vehicleId: string) => {
         if (!confirm("Are you sure you want to delete this vehicle registration? This will permanently disable your QR code.")) return;
 
-        setDeleting(true);
+        setDeleting(vehicleId);
         try {
             const { error } = await supabase
                 .from("vehicles")
                 .delete()
-                .eq("id", vehicle.id);
+                .eq("id", vehicleId);
 
             if (error) throw error;
 
             toast.success("Vehicle deleted successfully");
-            setVehicle(null);
-            setIsEditing(false);
+            fetchVehicles();
+            if (isEditing?.id === vehicleId) setIsEditing(null);
         } catch (error: any) {
             toast.error(error.message || "Failed to delete vehicle");
         } finally {
-            setDeleting(false);
+            setDeleting(null);
         }
     };
 
@@ -84,111 +84,118 @@ export default function Dashboard() {
                         <p className="text-zinc-400">Welcome, {user?.displayName}</p>
                     </header>
 
-                    {!vehicle || isEditing ? (
+                    {isEditing || (vehicles.length === 0 && !fetching) ? (
                         <div className="space-y-6">
-                            {isEditing && (
+                            {(isEditing || (vehicles.length === 0 && !fetching)) && (
                                 <Button
                                     variant="ghost"
-                                    onClick={() => setIsEditing(false)}
-                                    className="text-zinc-400 hover:text-white mb-4"
+                                    onClick={() => {
+                                        setIsEditing(null);
+                                        // If we were just showing the empty state form, we don't need to do anything
+                                        // but if we were editing, this will go back to the list
+                                    }}
+                                    className="text-zinc-400 hover:text-black hover:bg-yellow-500 mb-4"
                                 >
                                     <ArrowLeft className="mr-2 h-4 w-4" />
-                                    Back to Dashboard
+                                    {isEditing ? "Back to Dashboard" : "Cancel"}
                                 </Button>
-                            )}
-                            {!isEditing && (
-                                <div className="p-8 border-2 border-dashed border-zinc-800 rounded-xl text-center space-y-4">
-                                    <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mx-auto">
-                                        <Plus className="h-8 w-8 text-yellow-500" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-semibold">No vehicle registered</h3>
-                                        <p className="text-zinc-400">Register your vehicle to generate a QR code for parking alerts.</p>
-                                    </div>
-                                </div>
                             )}
                             <VehicleForm
                                 userId={user!.uid}
-                                initialData={isEditing ? vehicle : null}
+                                initialData={isEditing}
                                 onSuccess={() => {
-                                    fetchVehicle();
-                                    setIsEditing(false);
+                                    fetchVehicles();
+                                    setIsEditing(null);
                                 }}
                             />
                         </div>
                     ) : (
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <Card className="bg-zinc-950 border-yellow-500/20 text-white relative group overflow-hidden">
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">My Vehicle</CardTitle>
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-zinc-500 hover:text-yellow-500 transition-colors"
-                                            onClick={() => setIsEditing(true)}
-                                        >
-                                            <Edit2 className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-zinc-500 hover:text-red-500 transition-colors"
-                                            onClick={handleDelete}
-                                            disabled={deleting}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <div className="p-3 bg-zinc-900 rounded-xl">
-                                            {vehicle.vehicle_type === 'Car' ? (
-                                                <Car className="h-6 w-6 text-yellow-500" />
-                                            ) : vehicle.vehicle_type === 'Bike' ? (
-                                                <Bike className="h-6 w-6 text-yellow-500" />
-                                            ) : vehicle.vehicle_type === 'Truck' ? (
-                                                <Truck className="h-6 w-6 text-yellow-500" />
-                                            ) : (
-                                                <Car className="h-6 w-6 text-yellow-500" />
-                                            )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {vehicles.map((v, index) => (
+                                <Card key={v.id} className="bg-zinc-950 border-yellow-500/20 text-white relative group overflow-hidden">
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium truncate pr-4">
+                                            {v.nickname || `My Vehicle ${index + 1}`}
+                                        </CardTitle>
+                                        <div className="flex items-center gap-1">
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 text-zinc-500 hover:text-yellow-500 transition-colors"
+                                                onClick={() => setIsEditing(v)}
+                                            >
+                                                <Edit2 className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 text-zinc-500 hover:text-red-500 transition-colors"
+                                                onClick={() => handleDelete(v.id)}
+                                                disabled={deleting === v.id}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
                                         </div>
-                                        <div>
-                                            <div className="text-2xl font-bold text-yellow-500 leading-none">{vehicle.vehicle_number}</div>
-                                            <p className="text-xs text-zinc-400 mt-1">
-                                                {vehicle.nickname || vehicle.vehicle_type}
-                                            </p>
+                                    </CardHeader>
+                                    <CardContent className="space-y-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-zinc-900 rounded-xl">
+                                                {v.vehicle_type === 'Car' ? (
+                                                    <Car className="h-6 w-6 text-yellow-500" />
+                                                ) : v.vehicle_type === 'Bike' ? (
+                                                    <Bike className="h-6 w-6 text-yellow-500" />
+                                                ) : v.vehicle_type === 'Truck' ? (
+                                                    <Truck className="h-6 w-6 text-yellow-500" />
+                                                ) : (
+                                                    <Car className="h-6 w-6 text-yellow-500" />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="text-2xl font-bold text-yellow-500 leading-none">{v.vehicle_number}</div>
+                                                <p className="text-xs text-zinc-400 mt-1 uppercase tracking-tight">
+                                                    {v.vehicle_type}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <Button
-                                            variant="outline"
-                                            className="w-full border-yellow-500/50 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold h-12 transition-all"
-                                            onClick={() => router.push(`/qr/${vehicle.qr_code_id}`)}
-                                        >
-                                            <QrCode className="mr-2 h-5 w-5" />
-                                            View QR Code
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
 
-                            <Card className="bg-zinc-950 border-zinc-800 text-white">
-                                <CardHeader>
-                                    <CardTitle className="text-sm font-medium">Quick Stats</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex justify-between">
-                                        <span className="text-zinc-400">Total Alerts</span>
-                                        <span className="font-semibold text-yellow-500">0</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-zinc-400">Account Type</span>
-                                        <span className="font-semibold">Free MVP</span>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                        <div className="grid grid-cols-2 gap-4 py-4 border-y border-zinc-900">
+                                            <div>
+                                                <p className="text-[10px] uppercase font-bold text-zinc-600 mb-1">Total Alerts</p>
+                                                <p className="text-lg font-bold text-white">0</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] uppercase font-bold text-zinc-600 mb-1">Account Type</p>
+                                                <p className="text-sm font-semibold text-zinc-300">Free MVP</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-2">
+                                            <Button
+                                                variant="outline"
+                                                className="w-full border-yellow-500/50 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold h-12 transition-all"
+                                                onClick={() => router.push(`/qr/${v.qr_code_id}`)}
+                                            >
+                                                <QrCode className="mr-2 h-5 w-5" />
+                                                View QR Code
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+
+                            {/* Add New Vehicle Card */}
+                            <button
+                                onClick={() => setIsEditing(null)}
+                                className="h-full min-h-[300px] border-2 border-dashed border-zinc-800 rounded-xl hover:border-yellow-500/50 hover:bg-yellow-500/5 transition-all group flex flex-col items-center justify-center space-y-4"
+                            >
+                                <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center group-hover:bg-yellow-500/10 transition-colors">
+                                    <Plus className="h-6 h-6 text-zinc-500 group-hover:text-yellow-500" />
+                                </div>
+                                <div className="text-center">
+                                    <p className="font-bold text-zinc-400 group-hover:text-yellow-500">Add New Vehicle</p>
+                                    <p className="text-xs text-zinc-600">Register another vehicle</p>
+                                </div>
+                            </button>
                         </div>
                     )}
                 </div>
