@@ -4,7 +4,7 @@ import { useEffect, useState, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
-import { AlertTriangle, CheckCircle2, Info, Car, Bike, AlertCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Info, Car, Bike, AlertCircle, Truck } from "lucide-react";
 import toast from "react-hot-toast";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -103,8 +103,12 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
                         <div className="mx-auto p-4 bg-zinc-900 rounded-full w-fit mb-4">
                             {vehicle.vehicle_type === "Car" ? (
                                 <Car className="h-10 w-10 text-yellow-500" />
-                            ) : (
+                            ) : vehicle.vehicle_type === "Bike" ? (
                                 <Bike className="h-10 w-10 text-yellow-500" />
+                            ) : vehicle.vehicle_type === "Truck" ? (
+                                <Truck className="h-10 w-10 text-yellow-500" />
+                            ) : (
+                                <Car className="h-10 w-10 text-yellow-500" />
                             )}
                         </div>
                         <CardTitle className="text-2xl font-bold tracking-widest text-white">
