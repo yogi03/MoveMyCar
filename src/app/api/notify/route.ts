@@ -57,7 +57,20 @@ export async function POST(req: Request) {
             tokens: fcmTokens,
         };
 
-        const response = await adminMessaging.sendEachForMulticast(message);
+        const response = await adminMessaging.sendEachForMulticast({
+            ...message,
+            android: {
+                notification: {
+                    tag: "move-my-car-alert",
+                },
+            },
+            webpush: {
+                notification: {
+                    tag: "move-my-car-alert",
+                    renotify: true,
+                },
+            },
+        });
 
         // 4. Log alert and update last_alert_at
         await logAlert(vehicle.id);

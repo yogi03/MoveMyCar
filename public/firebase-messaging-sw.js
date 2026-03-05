@@ -18,7 +18,35 @@ messaging.onBackgroundMessage((payload) => {
     const notificationOptions = {
         body: payload.notification.body,
         icon: "/icons/icon-192x192.png",
+        tag: "move-my-car-alert", // Use a tag to replace existing notifications of the same type
+        renotify: true,           // Vibrate/sound again even if replaced
+        data: {
+            url: "/"              // Could be dynamic if needed
+        }
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener("notificationclick", (event) => {
+    console.log("[firebase-messaging-sw.js] Notification clicked:", event.notification.tag);
+
+    // Close the notification
+    event.notification.close();
+
+    // Focus existing window or open a new one
+    event.waitUntil(
+        clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+            if (clientList.length > 0) {
+                let client = clientList[0];
+                for (let i = 0; i < clientList.length; i++) {
+                    if (clientList[i].focused) {
+                        client = clientList[i];
+                    }
+                }
+                return client.focus();
+            }
+            return clients.openWindow("/");
+        })
+    );
 });
