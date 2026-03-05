@@ -12,7 +12,7 @@ export default function GoogleOneTap() {
     const isInitialized = useRef(false);
 
     const initializeOneTap = useCallback(() => {
-        if (typeof window !== "undefined" && window.google && !isInitialized.current && clientId) {
+        if (typeof window !== "undefined" && window.google && !isInitialized.current && clientId && !user) {
             isInitialized.current = true;
             console.log("Initializing Google One Tap...");
 
@@ -28,8 +28,9 @@ export default function GoogleOneTap() {
                     }
                 },
                 auto_select: false,
-                use_fedcm_for_prompt: true,
+                use_fedcm_for_prompt: false,
                 itp_support: true,
+                cancel_on_tap_outside: false,
             });
 
             window.google.accounts.id.prompt((notification: {
@@ -46,6 +47,10 @@ export default function GoogleOneTap() {
 
                     if (reason === "skipped_moment" || reason === "suppressed_by_user") {
                         console.log("One Tap was recently dismissed by the user. It will reappear after a cooling period.");
+                    } else if (reason === "opt_out_or_no_session") {
+                        console.log("User has opted out or has no active Google session.");
+                    } else if (reason === "unregistered_origin") {
+                        console.error("This origin is not registered in the Google Cloud Console.");
                     }
 
                     isInitialized.current = false;
@@ -68,7 +73,7 @@ export default function GoogleOneTap() {
         }
     }, [user, loading, clientId, initializeOneTap]);
 
-    if (user || !clientId) return null;
+    if (loading || user || !clientId) return null;
 
     return (
         <Script
@@ -94,6 +99,7 @@ declare global {
                         auto_select?: boolean;
                         use_fedcm_for_prompt?: boolean;
                         itp_support?: boolean;
+                        cancel_on_tap_outside?: boolean;
                     }) => void;
                     prompt: (callback: (notification: {
                         isNotDisplayed: () => boolean;

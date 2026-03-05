@@ -109,13 +109,14 @@ export default function QRPage({ params }: { params: Promise<{ qr_code_id: strin
                                             className="w-full h-auto"
                                             unoptimized
                                         />
-                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#191919] p-1 rounded-lg">
-                                            <div className="w-20 h-16 relative">
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-0 rounded-lg shadow-sm border border-zinc-100">
+                                            <div className="w-24 h-12 relative">
                                                 <Image
-                                                    src="/logo-home.png"
+                                                    src="/logohome.png"
                                                     alt="MoveMyCar Logo"
                                                     fill
-                                                    className="object-contain"
+                                                    sizes="64px"
+                                                    className="object-fill p-0 rounded-lg"
                                                 />
                                             </div>
                                         </div>
