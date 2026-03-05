@@ -10,17 +10,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing QR ID" }, { status: 400 });
         }
 
-        // 1. Fetch vehicle and owner's last app opening status
+        // 1. Fetch vehicle and check anti-spam
         const { data: vehicle, error: vError } = await supabase
             .from("vehicles")
-            .select(`
-                id, 
-                user_id, 
-                last_alert_at, 
-                active_alert_count,
-                vehicle_number,
-                users (last_app_opened_at)
-            `)
+            .select("id, user_id, last_alert_at, vehicle_number")
             .eq("qr_code_id", qr_code_id)
             .single();
 
@@ -28,34 +21,18 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Vehicle not found" }, { status: 404 });
         }
 
-        const ownerData = vehicle.users as any;
-        const lastAppOpened = ownerData?.last_app_opened_at ? new Date(ownerData.last_app_opened_at).getTime() : 0;
-        const lastAlert = vehicle.last_alert_at ? new Date(vehicle.last_alert_at).getTime() : 0;
+        // Anti-spam: Max 1 alert per 2 minutes
+        if (vehicle.last_alert_at) {
+            const lastAlert = new Date(vehicle.last_alert_at).getTime();
+            const now = new Date().getTime();
+            const diffMinutes = (now - lastAlert) / (1000 * 60);
 
-        let currentCount = vehicle.active_alert_count || 0;
-
-        // Reset counter if owner opened the app after the last alert
-        if (lastAppOpened > lastAlert) {
-            currentCount = 0;
-        }
-
-        // Anti-spam: 15 seconds cooldown
-        const now = new Date().getTime();
-        const diffSeconds = (now - lastAlert) / 1000;
-
-        if (diffSeconds < 15) {
-            return NextResponse.json(
-                { error: "Please wait 15 seconds between alerts." },
-                { status: 429 }
-            );
-        }
-
-        // Check limit: 5 alerts
-        if (currentCount >= 5) {
-            return NextResponse.json(
-                { error: "Maximum alerts reached (5/5). Please wait for the owner to arrive." },
-                { status: 429 }
-            );
+            if (diffMinutes < 2) {
+                return NextResponse.json(
+                    { error: "Please wait 2 minutes between alerts." },
+                    { status: 429 }
+                );
+            }
         }
 
         // 2. Fetch owner tokens
@@ -65,37 +42,33 @@ export async function POST(req: Request) {
             .eq("user_id", vehicle.user_id);
 
         if (tError || !tokens || tokens.length === 0) {
+            // Still log the alert even if no tokens found
             await logAlert(vehicle.id);
             return NextResponse.json({ message: "Alert logged, but owner hasn't enabled notifications yet." });
         }
 
         // 3. Send Notifications
-        const nextCount = currentCount + 1;
         const fcmTokens = tokens.map(t => t.fcm_token);
         const message = {
             notification: {
-                title: `🚗 Parking Alert (${nextCount} requests)`,
-                body: `Someone is waiting for you to move your ${vehicle.vehicle_number}.`,
+                title: "Your vehicle is blocking someone 🚗",
+                body: `Someone requested you to move your ${vehicle.vehicle_number}.`,
             },
             tokens: fcmTokens,
         };
 
         const response = await adminMessaging.sendEachForMulticast(message);
 
-        // 4. Log alert and update vehicle status
+        // 4. Log alert and update last_alert_at
         await logAlert(vehicle.id);
         await supabase
             .from("vehicles")
-            .update({
-                last_alert_at: new Date().toISOString(),
-                active_alert_count: nextCount
-            })
+            .update({ last_alert_at: new Date().toISOString() })
             .eq("id", vehicle.id);
 
         return NextResponse.json({
             success: true,
-            sentCount: response.successCount,
-            alertCount: nextCount
+            sentCount: response.successCount
         });
 
     } catch (error: any) {
