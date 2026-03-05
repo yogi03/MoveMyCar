@@ -45,12 +45,20 @@ export function useFCM(userId: string | undefined) {
                 const messaging = getMessaging(app);
                 const unsubscribe = onMessage(messaging, (payload) => {
                     toast((t) => (
-                        <div className="flex flex-col">
-                            <span className="font-bold">{payload.notification?.title}</span>
-                            <span className="text-sm">{payload.notification?.body}</span>
+                        <div className="flex items-center gap-3">
+                            <div className="relative w-10 h-10 flex-shrink-0">
+                                <img
+                                    src="/logo.png"
+                                    alt="Logo"
+                                    className="w-full h-full object-contain rounded"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="font-bold">{payload.notification?.title}</span>
+                                <span className="text-sm">{payload.notification?.body}</span>
+                            </div>
                         </div>
                     ), {
-                        icon: '🚗',
                         duration: 6000,
                     });
                 });

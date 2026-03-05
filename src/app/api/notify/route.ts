@@ -53,6 +53,7 @@ export async function POST(req: Request) {
             notification: {
                 title: "Your vehicle is blocking someone 🚗",
                 body: `Someone requested you to move your ${vehicle.vehicle_number}.`,
+                icon: "/logo.png",
             },
             tokens: fcmTokens,
         };
@@ -62,12 +63,14 @@ export async function POST(req: Request) {
             android: {
                 notification: {
                     tag: "move-my-car-alert",
+                    icon: "/logo.png",
                 },
             },
             webpush: {
                 notification: {
                     tag: "move-my-car-alert",
                     renotify: true,
+                    icon: "/logo.png",
                 },
             },
         });

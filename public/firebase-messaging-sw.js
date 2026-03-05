@@ -17,7 +17,7 @@ messaging.onBackgroundMessage((payload) => {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: "/icons/icon-192x192.png",
+        icon: "/logo.png",
         tag: "move-my-car-alert", // Use a tag to replace existing notifications of the same type
         renotify: true,           // Vibrate/sound again even if replaced
         data: {
