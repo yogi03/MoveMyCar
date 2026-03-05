@@ -16,10 +16,18 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [cooldown, setCooldown] = useState(0);
 
     useEffect(() => {
         fetchVehicle();
     }, [qr_code_id]);
+
+    useEffect(() => {
+        if (cooldown > 0) {
+            const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [cooldown]);
 
     const fetchVehicle = async () => {
         try {
@@ -60,6 +68,7 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
             }
 
             setSent(true);
+            setCooldown(15);
             toast.success("Owner notified!");
         } catch (err: any) {
             toast.error(err.message);
@@ -119,7 +128,7 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6 pt-2">
-                        {!sent ? (
+                        {!sent || cooldown > 0 ? (
                             <>
                                 <div className="bg-yellow-500/5 border border-yellow-500/10 p-4 rounded-lg flex gap-3 items-start">
                                     <Info className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
@@ -130,11 +139,11 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
 
                                 <Button
                                     onClick={handleNotify}
-                                    disabled={sending}
-                                    className="w-full bg-yellow-500 hover:bg-yellow-600 active:scale-95 text-black font-bold py-8 transition-all duration-200"
+                                    disabled={sending || cooldown > 0}
+                                    className="w-full bg-yellow-500 hover:bg-yellow-600 active:scale-95 text-black font-bold py-8 transition-all duration-200 disabled:bg-zinc-800 disabled:text-zinc-500"
                                 >
                                     <AlertTriangle className="mr-2 h-6 w-6" />
-                                    🚨 Request to Move Vehicle
+                                    {sending ? "Sending..." : cooldown > 0 ? `Wait ${cooldown}s` : sent ? "🚨 Send Another Tag" : "🚨 Tag Owner to Move"}
                                 </Button>
                             </>
                         ) : (
@@ -143,7 +152,7 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
                                 <div>
                                     <h3 className="text-lg font-bold text-white">Owner Notified!</h3>
                                     <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-                                        Your request has been sent. Please wait for the owner to arrive.
+                                        Your request has been sent. If the owner doesn't arrive, you can try again in 15 seconds.
                                     </p>
                                 </div>
                             </div>
@@ -155,15 +164,6 @@ export default function PublicScanPage({ params }: { params: Promise<{ qr_code_i
                     </CardContent>
                 </Card>
 
-                {sent && (
-                    <Button
-                        variant="ghost"
-                        className="w-full text-zinc-500 hover:text-white"
-                        onClick={() => setSent(false)}
-                    >
-                        Send another request
-                    </Button>
-                )}
             </div>
             <Footer />
         </div>

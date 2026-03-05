@@ -29,6 +29,7 @@ export default function Dashboard() {
 
         if (user) {
             fetchVehicles();
+            updateLastOpened();
 
             // Real-time alerts
             const channel = supabase
@@ -57,6 +58,18 @@ export default function Dashboard() {
             };
         }
     }, [user, loading, router]);
+
+    const updateLastOpened = async () => {
+        if (!user) return;
+        try {
+            await supabase
+                .from("users")
+                .update({ last_app_opened_at: new Date().toISOString() })
+                .eq("id", user.uid);
+        } catch (error) {
+            console.error("Error updating last opened status:", error);
+        }
+    };
 
     const fetchVehicles = async () => {
         if (!user) return;
