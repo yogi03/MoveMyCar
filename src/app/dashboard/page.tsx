@@ -12,14 +12,16 @@ import { QrCode, Car, Bike, Plus, Trash2, Edit2, ArrowLeft, Truck } from "lucide
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import toast from "react-hot-toast";
+import PricingModal from "@/components/pricing-modal";
 
 export default function Dashboard() {
-    const { user, loading, logout } = useAuth();
+    const { user, loading, logout, userPlan } = useAuth();
     useFCM(user?.uid);
     const [vehicles, setVehicles] = useState<any[]>([]);
     const [fetching, setFetching] = useState(true);
     const [isEditing, setIsEditing] = useState<any>(null);
     const [deleting, setDeleting] = useState<string | null>(null);
+    const [showPricing, setShowPricing] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -135,9 +137,24 @@ export default function Dashboard() {
             <Header />
             <div className="flex-1 p-4 md:p-8">
                 <div className="max-w-4xl mx-auto space-y-8">
-                    <header>
-                        <h1 className="text-3xl font-bold text-yellow-500">Dashboard</h1>
-                        <p className="text-zinc-400">Welcome, {user?.displayName}</p>
+                    <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-yellow-500">Dashboard</h1>
+                            <p className="text-zinc-400">Welcome, {user?.displayName}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${userPlan.plan === 'FREE' ? 'border-zinc-800 text-zinc-500' : userPlan.plan === 'BASIC' ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/5' : 'border-purple-500/50 text-purple-500 bg-purple-500/5'}`}>
+                                {userPlan.plan} Plan
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-zinc-500 hover:text-white hover:bg-yellow-500 text-xs h-7"
+                                onClick={() => setShowPricing(true)}
+                            >
+                                Manage
+                            </Button>
+                        </div>
                     </header>
 
                     {isEditing || (vehicles.length === 0 && !fetching) ? (
@@ -237,7 +254,15 @@ export default function Dashboard() {
 
                             {/* Add New Vehicle Card */}
                             <button
-                                onClick={() => setIsEditing('new')}
+                                onClick={() => {
+                                    const limit = userPlan.plan === 'FREE' ? 1 : userPlan.plan === 'BASIC' ? 5 : 20;
+                                    if (vehicles.length >= limit) {
+                                        setShowPricing(true);
+                                        toast.error(`You have reached the limit for your ${userPlan.plan} plan.`);
+                                    } else {
+                                        setIsEditing('new');
+                                    }
+                                }}
                                 className="h-full min-h-[300px] border-2 border-dashed border-zinc-800 rounded-xl hover:border-yellow-500/50 hover:bg-yellow-500/5 transition-all group flex flex-col items-center justify-center space-y-4"
                             >
                                 <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center group-hover:bg-yellow-500/10 transition-colors">
@@ -252,6 +277,20 @@ export default function Dashboard() {
                     )}
                 </div>
             </div>
+
+            <PricingModal
+                isOpen={showPricing}
+                onClose={() => setShowPricing(false)}
+                userId={user!.uid}
+                userName={user?.displayName}
+                userEmail={user?.email}
+                currentPlan={userPlan.plan}
+                subscriptionEnd={userPlan.subscription_end}
+                onSuccess={() => {
+                    // Logic to refresh plan data if needed, but useAuth does it on mount/sync
+                }}
+            />
+
             <Footer />
         </div>
     );

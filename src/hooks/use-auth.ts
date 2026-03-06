@@ -13,17 +13,14 @@ import { supabase } from "@/lib/supabase";
 export function useAuth() {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [userPlan, setUserPlan] = useState<{ plan: string, subscription_end: string | null }>({ plan: 'FREE', subscription_end: null });
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                console.log("Firebase user logged in:", firebaseUser.uid);
-                console.log("Supabase URL present:", !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-                console.log("Supabase Anon Key present:", !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
                 setUser(firebaseUser);
 
-                // Sync with Supabase
+                // Sync with Supabase and get plan info
                 const { data, error } = await supabase
                     .from("users")
                     .upsert({
@@ -31,17 +28,20 @@ export function useAuth() {
                         email: firebaseUser.email,
                         name: firebaseUser.displayName,
                     }, { onConflict: "id" })
-                    .select()
+                    .select("plan, subscription_end")
                     .single();
 
                 if (error) {
-                    console.error("Supabase sync error (full):", JSON.stringify(error, Object.getOwnPropertyNames(error)));
-                } else {
-                    console.log("User successfully synced to Supabase:", data);
+                    console.error("Supabase sync error:", error);
+                } else if (data) {
+                    setUserPlan({
+                        plan: data.plan || 'FREE',
+                        subscription_end: data.subscription_end
+                    });
                 }
             } else {
-                console.log("No Firebase user found.");
                 setUser(null);
+                setUserPlan({ plan: 'FREE', subscription_end: null });
             }
             setLoading(false);
         });
@@ -66,5 +66,5 @@ export function useAuth() {
         }
     };
 
-    return { user, loading, loginWithGoogle, logout };
+    return { user, loading, loginWithGoogle, logout, userPlan };
 }
