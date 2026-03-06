@@ -19,11 +19,12 @@ import toast from "react-hot-toast";
 
 interface VehicleFormProps {
     userId: string;
+    currentPlan?: string;
     initialData?: any;
     onSuccess?: () => void;
 }
 
-export default function VehicleForm({ userId, initialData, onSuccess }: VehicleFormProps) {
+export default function VehicleForm({ userId, currentPlan, initialData, onSuccess }: VehicleFormProps) {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const isEdit = !!initialData;
@@ -35,7 +36,11 @@ export default function VehicleForm({ userId, initialData, onSuccess }: VehicleF
         const formData = new FormData(e.currentTarget);
         const vehicleNumber = formData.get("vehicleNumber") as string;
         const vehicleType = formData.get("vehicleType") as string;
-        const nickname = formData.get("nickname") as string;
+        let nickname = formData.get("nickname") as string;
+
+        if (currentPlan === 'FREE') {
+            nickname = "Vehicle 1";
+        }
 
         const normalizedInput = vehicleNumber.replace(/\s+/g, "").toUpperCase();
 
@@ -129,14 +134,23 @@ export default function VehicleForm({ userId, initialData, onSuccess }: VehicleF
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="nickname" className="text-zinc-400">Nickname (Optional)</Label>
+                        <div className="flex justify-between items-center">
+                            <Label htmlFor="nickname" className="text-zinc-400">Nickname</Label>
+                            {currentPlan === 'FREE' && (
+                                <span className="text-[10px] text-yellow-500 font-bold uppercase">Premium Feature</span>
+                            )}
+                        </div>
                         <Input
                             id="nickname"
                             name="nickname"
-                            placeholder="e.g., My Beast"
-                            defaultValue={initialData?.nickname}
-                            className="bg-black border-zinc-800 text-white"
+                            placeholder={currentPlan === 'FREE' ? "Vehicle 1" : "e.g., My Beast"}
+                            defaultValue={currentPlan === 'FREE' ? "Vehicle 1" : initialData?.nickname}
+                            disabled={currentPlan === 'FREE'}
+                            className={`bg-black border-zinc-800 text-white ${currentPlan === 'FREE' ? 'opacity-50 cursor-not-allowed' : ''}`}
                         />
+                        {currentPlan === 'FREE' && (
+                            <p className="text-[10px] text-zinc-500 italic">Upgrade to basic or advanced plan to set custom nicknames.</p>
+                        )}
                     </div>
 
                     <Button

@@ -8,13 +8,16 @@ const razorpay = new Razorpay({
 
 export async function POST(req: Request) {
     try {
-        const { plan, cycle } = await req.json();
+        const { plan, cycle, currentPlan } = await req.json();
+
+        const PRICES: any = {
+            BASIC: { monthly: 5, yearly: 49 },
+            ADVANCED: { monthly: 8, yearly: 79 }
+        };
 
         let amount = 0;
-        if (plan === 'BASIC') {
-            amount = cycle === 'monthly' ? 5 : 49;
-        } else if (plan === 'ADVANCED') {
-            amount = cycle === 'monthly' ? 8 : 79;
+        if (PRICES[plan]) {
+            amount = PRICES[plan][cycle];
         }
 
         const options = {

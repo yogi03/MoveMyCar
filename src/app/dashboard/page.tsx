@@ -13,15 +13,17 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import toast from "react-hot-toast";
 import PricingModal from "@/components/pricing-modal";
+import SubscriptionStatusModal from "@/components/subscription-status-modal";
 
 export default function Dashboard() {
-    const { user, loading, logout, userPlan } = useAuth();
+    const { user, loading, logout, userPlan, refreshPlan } = useAuth();
     useFCM(user?.uid);
     const [vehicles, setVehicles] = useState<any[]>([]);
     const [fetching, setFetching] = useState(true);
     const [isEditing, setIsEditing] = useState<any>(null);
     const [deleting, setDeleting] = useState<string | null>(null);
     const [showPricing, setShowPricing] = useState(false);
+    const [showStatus, setShowStatus] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -143,9 +145,12 @@ export default function Dashboard() {
                             <p className="text-zinc-400">Welcome, {user?.displayName}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${userPlan.plan === 'FREE' ? 'border-zinc-800 text-zinc-500' : userPlan.plan === 'BASIC' ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/5' : 'border-purple-500/50 text-purple-500 bg-purple-500/5'}`}>
+                            <button
+                                onClick={() => setShowStatus(true)}
+                                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all hover:scale-105 active:scale-95 ${userPlan.plan === 'FREE' ? 'border-zinc-800 text-zinc-500 hover:border-zinc-700' : userPlan.plan === 'BASIC' ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/5 hover:bg-yellow-500/10' : 'border-purple-500/50 text-purple-500 bg-purple-500/5 hover:bg-purple-500/10'}`}
+                            >
                                 {userPlan.plan} Plan
-                            </div>
+                            </button>
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -171,6 +176,7 @@ export default function Dashboard() {
                             )}
                             <VehicleForm
                                 userId={user!.uid}
+                                currentPlan={userPlan.plan}
                                 initialData={isEditing && typeof isEditing === 'object' ? isEditing : null}
                                 onSuccess={() => {
                                     fetchVehicles();
@@ -184,7 +190,7 @@ export default function Dashboard() {
                                 <Card key={v.id} className="bg-zinc-950 border-yellow-500/20 text-white relative group overflow-hidden">
                                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                         <CardTitle className="text-sm font-medium truncate pr-4">
-                                            {v.nickname || `My Vehicle ${index + 1}`}
+                                            {v.nickname || `Vehicle ${index + 1}`}
                                         </CardTitle>
                                         <div className="flex items-center gap-1">
                                             <Button
@@ -233,8 +239,11 @@ export default function Dashboard() {
                                                 <p className="text-lg font-bold text-white">{v.alert_count || 0}</p>
                                             </div>
                                             <div>
-                                                <p className="text-[10px] uppercase font-bold text-zinc-600 mb-1">Account Type</p>
-                                                <p className="text-sm font-semibold text-zinc-300">Free MVP</p>
+                                                <p className="text-[10px] uppercase font-bold text-zinc-600 mb-1">QR Status</p>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+                                                    <p className="text-sm font-semibold text-zinc-300">Active</p>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -287,8 +296,15 @@ export default function Dashboard() {
                 currentPlan={userPlan.plan}
                 subscriptionEnd={userPlan.subscription_end}
                 onSuccess={() => {
-                    // Logic to refresh plan data if needed, but useAuth does it on mount/sync
+                    refreshPlan();
                 }}
+            />
+
+            <SubscriptionStatusModal
+                isOpen={showStatus}
+                onClose={() => setShowStatus(false)}
+                userPlan={userPlan}
+                onManage={() => setShowPricing(true)}
             />
 
             <Footer />

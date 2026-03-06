@@ -74,7 +74,7 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
             const res = await fetch("/api/payment/create-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ plan: planId, cycle }),
+                body: JSON.stringify({ plan: planId, cycle, currentPlan }),
             });
 
             const order = await res.json();
@@ -150,11 +150,7 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
     };
 
     const isPlanDisabled = (planId: string) => {
-        if (currentPlan === planId) return true;
-        if (currentPlan === 'ADVANCED' && isSubscriptionActive()) {
-            return planId === 'FREE' || planId === 'BASIC';
-        }
-        return false;
+        return false; // All plans can be purchased and queued
     };
 
     if (!isOpen) return null;
@@ -233,11 +229,11 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
                                     </ul>
 
                                     <Button
-                                        disabled={isPlanDisabled(plan.id) || loading === plan.id}
+                                        disabled={loading === plan.id}
                                         onClick={() => handleSubscribe(plan.id)}
-                                        className={`w-full h-12 font-bold rounded-xl transition-all ${currentPlan === plan.id ? 'bg-zinc-800 text-zinc-500 cursor-default' : isPlanDisabled(plan.id) ? 'bg-zinc-900/50 text-zinc-600 cursor-not-allowed border-zinc-800/50' : plan.id === 'FREE' ? 'border-zinc-800 text-zinc-400 hover:bg-zinc-800' : 'bg-yellow-500 hover:bg-yellow-600 text-black'}`}
+                                        className={`w-full h-12 font-bold rounded-xl transition-all ${plan.id === 'FREE' ? 'border-zinc-800 text-zinc-400 hover:bg-zinc-800' : 'bg-yellow-500 hover:bg-yellow-600 text-black'}`}
                                     >
-                                        {currentPlan === plan.id ? 'Current Plan' : isPlanDisabled(plan.id) ? 'Access Restricted' : plan.price === 0 ? 'Basic Access' : loading === plan.id ? 'Processing...' : 'Get Started'}
+                                        {loading === plan.id ? 'Processing...' : plan.id === 'FREE' ? 'Basic Access' : 'Get Started'}
                                     </Button>
                                 </div>
                             ))}
