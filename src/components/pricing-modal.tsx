@@ -83,7 +83,7 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: order.amount,
                 currency: "INR",
-                name: "MoveMyCar",
+                name: "Move My Car",
                 description: `${planId} ${cycle} subscription`,
                 order_id: order.id,
                 handler: async function (response: any) {
