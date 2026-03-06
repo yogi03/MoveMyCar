@@ -166,19 +166,19 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="bg-zinc-950 border border-zinc-900 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl"
+                    className="bg-zinc-950 border border-zinc-900 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
                 >
-                    <div className="p-8 flex justify-between items-center border-b border-zinc-900">
+                    <div className="p-6 md:p-8 flex justify-between items-center border-b border-zinc-900 shrink-0">
                         <div>
-                            <h2 className="text-3xl font-bold text-white">Choose Your Plan</h2>
-                            <p className="text-zinc-500">Upgrade to add more vehicles and unlock premium features.</p>
+                            <h2 className="text-2xl md:text-3xl font-bold text-white">Choose Your Plan</h2>
+                            <p className="text-sm md:text-base text-zinc-500">Upgrade to add more vehicles and unlock premium features.</p>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-zinc-900 rounded-full transition-colors text-zinc-500">
                             <X className="w-6 h-6" />
                         </button>
                     </div>
 
-                    <div className="p-8 space-y-8">
+                    <div className="p-6 md:p-8 space-y-8 overflow-y-auto">
                         {/* Billing Toggle */}
                         <div className="flex justify-center">
                             <div className="bg-zinc-900 p-1 rounded-xl flex items-center gap-1">
@@ -197,7 +197,7 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {PLANS.map((plan) => (
                                 <div
                                     key={plan.id}
@@ -217,7 +217,7 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
                                     </div>
 
                                     <div className="mb-6">
-                                        <span className="text-4xl font-black text-white">
+                                        <span className="text-3xl md:text-4xl font-black text-white">
                                             ₹{cycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
                                         </span>
                                         <span className="text-zinc-500 text-sm ml-1">/{cycle === 'monthly' ? 'mo' : 'yr'}</span>
