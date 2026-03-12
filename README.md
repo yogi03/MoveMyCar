@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="public/logohome.png" alt="Move My Car Logo" width="200"/>
 
-## Getting Started
+  # Move My Car 🚗
 
-First, run the development server:
+  **The smartest way to handle parking blocks.**  
+  One scan. One alert. Zero phone numbers exposed.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  [![Live App](https://img.shields.io/badge/Live%20App-qrparkalert.online-yellow?style=for-the-badge)](https://www.qrparkalert.online)
+  [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
+  [![Supabase](https://img.shields.io/badge/Supabase-Realtime-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
+  [![Razorpay](https://img.shields.io/badge/Payments-Razorpay-02042B?style=for-the-badge)](https://razorpay.com)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+</div>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📸 Screenshots
 
-## Learn More
+| Landing Page | Dashboard |
+|---|---|
+| ![Landing Page](public/1.png) | ![Dashboard - Register Vehicle](public/2.png) |
 
-To learn more about Next.js, take a look at the following resources:
+| Vehicle Dashboard | QR Code View |
+|---|---|
+| ![Vehicle Dashboard](public/4.png) | ![QR Code](public/3.png) |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Pricing Plans | Razorpay Payment |
+|---|---|
+| ![Pricing Plans](public/5.png) | ![Payment](public/6.png) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| About Page | Contact Page |
+|---|---|
+| ![About](public/8.png) | ![Contact](public/7.png) |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ✨ Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 🔒 Privacy-First Parking Alerts
+- Your **phone number and email are never exposed** — scanners only see an alert button
+- Anyone can scan your QR code and notify you instantly, with zero personal data shared
+- Completely anonymous communication between scanner and vehicle owner
+
+### 📲 Instant Push Notifications
+- Receive **real-time push alerts** on your phone the moment someone scans your QR code
+- Uses Firebase Cloud Messaging (FCM) for reliable delivery
+- Live dashboard updates via Supabase Realtime — no page refresh needed
+
+### 🔲 Unique QR Code Per Vehicle
+- Generate a **branded, printable QR card** for each registered vehicle
+- Download as PNG and place it on your dashboard or windshield
+- Each QR code has a unique ID linked only to your alert profile
+
+### 🚘 Multi-Vehicle Management
+- Register and manage **multiple vehicles** from one dashboard
+- Supports Cars, Bikes, Trucks, and more
+- Edit or delete vehicle registrations anytime
+- Track **total alert count** per vehicle
+
+### 💳 Flexible Subscription Plans
+| Plan | Price | Vehicles | Features |
+|---|---|---|---|
+| **Free** | ₹0/mo | 1 | Basic QR Alerts, Push Notifications |
+| **Basic** | ₹5/mo | Up to 5 | Priority Support, Custom Nicknames, Push Notifications |
+| **Advanced** | ₹8/mo | Up to 20 | Advanced Fleet View, Priority Escalation, Push Notifications |
+
+### 💰 Secure Payments via Razorpay
+- Supports **UPI, Cards, Netbanking, and Wallets**
+- Payments secured and processed by Razorpay
+
+### 📱 Progressive Web App (PWA)
+- **Install on your home screen** — works like a native app
+- Fully responsive, mobile-first design
+- Dark mode by default for visual excellence
+
+---
+
+## 📥 How to Install the App
+
+Move My Car is a **Progressive Web App (PWA)** — no app store needed!
+
+1. Open your browser and visit **[www.qrparkalert.online](https://www.qrparkalert.online)**
+2. Tap the **☰ hamburger menu** (top-right corner of your browser or the site header)
+3. Tap **"Download App"** / **"Add to Home Screen"**
+4. The app will be installed on your device, ready to use offline-first like a native app
+
+> **Tip:** On Android with Chrome, you'll see an "Add to Home screen" prompt. On iOS with Safari, tap the Share button and then "Add to Home Screen".
+
+---
+
+## 🚀 How to Use
+
+### Step 1 — Sign Up / Log In
+- Visit [www.qrparkalert.online](https://www.qrparkalert.online) and click **"Get Started Now"**
+- Sign in using your Google account (one click, no password needed)
+
+### Step 2 — Register Your Vehicle
+- After logging in, you'll land on the **Dashboard**
+- Fill in your **Vehicle Number** (e.g., MH12AB1234)
+- Select your **Vehicle Type** (Car, Bike, Truck, etc.)
+- Optionally give it a **Nickname** (e.g., "My White Beast") — available on paid plans
+- Click **"Generate QR Code"**
+
+### Step 3 — Get Your QR Card
+- Your unique QR card will be generated instantly
+- Click **"Download PNG"** to save it
+- Print it and **place it on your vehicle's dashboard or windshield**
+
+### Step 4 — Receive Alerts
+- Whenever someone **scans your QR code**, you'll receive an **instant push notification** on your phone
+- No app required for the person scanning — they just scan and tap the alert button in their browser
+- Your contact details remain 100% private throughout
+
+### Step 5 — Manage Your Fleet
+- From the Dashboard, view all your registered vehicles
+- See the **total alert count** for each vehicle
+- Edit vehicle details or delete a registration anytime
+- Upgrade your plan to add more vehicles
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 15, TypeScript, Tailwind CSS |
+| **Auth** | Firebase Authentication (Google OAuth) |
+| **Database** | Supabase (PostgreSQL) |
+| **Realtime** | Supabase Realtime Channels |
+| **Push Notifications** | Firebase Cloud Messaging (FCM) |
+| **Payments** | Razorpay |
+| **Hosting** | Vercel |
+
+---
+
+## 🤝 Support & Contact
+
+- 📧 Email: [yogendrachaurasiya30@gmail.com](mailto:yogendrachaurasiya30@gmail.com)
+- 🌐 Website: [www.qrparkalert.online](https://www.qrparkalert.online)
+- 🕐 Support available 24/7
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by <strong>Premium Aesthetics</strong> — © 2026 Move My Car. All rights reserved.</sub>
+</div>
