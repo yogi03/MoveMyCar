@@ -15,6 +15,13 @@
 
 ---
 
+> [!CAUTION]
+> ⚠️ This repository is source-available for transparency and portfolio purposes.
+> Commercial use, resale, or self-hosting with payment removal is not permitted.
+> See [LICENSE](./LICENSE) for details.
+
+---
+
 ## 📸 Screenshots
 
 | Landing Page | Dashboard |
