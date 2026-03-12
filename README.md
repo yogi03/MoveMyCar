@@ -120,6 +120,19 @@ Move My Car is a **Progressive Web App (PWA)** — no app store needed!
 
 ---
 
+## 🔮 Future Features (Roadmap)
+
+These features are planned for upcoming releases:
+
+| Feature | Description |
+|---|---|
+| 📱 **Native Android & iOS App** | Dedicated native apps on Google Play Store and Apple App Store for a smoother, faster experience with deeper OS integration |
+| 🔊 **Alarm-Style Alert Notifications** | High-priority sound & vibration alerts that break through Do Not Disturb — just like an alarm — so you never miss an urgent parking request |
+| 🔁 **Repeated Push Notification** | If the first alert goes unacknowledged, the system automatically re-notifies the vehicle owner every **5 minutes** until they respond |
+| 📞 **Anonymous Call Feature** | Allow the scanner to call the vehicle owner directly through the app — without ever exposing either party's real phone number — using masked/proxy calling |
+
+---
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
