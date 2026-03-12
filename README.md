@@ -163,5 +163,5 @@ These features are planned for upcoming releases:
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by <strong>Premium Aesthetics</strong> — © 2026 Move My Car. All rights reserved.</sub>
+  <sub>Built with <strong>Premium Aesthetics</strong> — © 2026 Move My Car. All rights reserved.</sub>
 </div>
