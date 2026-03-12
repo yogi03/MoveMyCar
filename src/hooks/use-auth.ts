@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { supabase } from "@/lib/supabase";
+import toast from "react-hot-toast";
 
 export function useAuth() {
     const [user, setUser] = useState<User | null>(null);
@@ -25,13 +26,22 @@ export function useAuth() {
                 setUser(firebaseUser);
 
                 // Sync with Supabase and get plan info
-                await supabase.from("users").upsert({
-                    id: firebaseUser.uid,
-                    email: firebaseUser.email,
-                    name: firebaseUser.displayName,
-                }, { onConflict: "id" });
+                try {
+                    const { error: syncError } = await supabase.from("users").upsert({
+                        id: firebaseUser.uid,
+                        email: firebaseUser.email,
+                        name: firebaseUser.displayName,
+                    }, { onConflict: "id" });
 
-                await refreshPlan(firebaseUser.uid);
+                    if (syncError) {
+                        console.error("Sync error:", syncError);
+                        toast.error("Failed to sync user data with database.");
+                    } else {
+                        await refreshPlan(firebaseUser.uid);
+                    }
+                } catch (e) {
+                    console.error("Auth sync exception:", e);
+                }
             } else {
                 setUser(null);
                 setUserPlan({ plan: 'FREE', subscription_end: null, upcoming_subscriptions: [] });

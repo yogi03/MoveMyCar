@@ -184,12 +184,12 @@ export default function PricingModal({ isOpen, onClose, userId, userName, userEm
                                 >
                                     Monthly
                                 </button>
-                                <button
+                                {/* <button
                                     onClick={() => setCycle('yearly')}
                                     className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${cycle === 'yearly' ? 'bg-yellow-500 text-black' : 'text-zinc-500 hover:text-white'}`}
                                 >
                                     Yearly <span className="text-[10px] ml-1 opacity-70">(Save ~20%)</span>
-                                </button>
+                                </button> */}
                             </div>
                         </div>
 
